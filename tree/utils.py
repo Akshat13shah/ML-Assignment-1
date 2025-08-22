@@ -4,44 +4,73 @@ There is no restriction on following the below template, these fucntions are her
 """
 
 import pandas as pd
+import numpy as np
 
 def one_hot_encoding(X: pd.DataFrame) -> pd.DataFrame:
     """
     Function to perform one hot encoding on the input data
     """
-
-    pass
+    return pd.get_dummies(X)
+    
 
 def check_ifreal(y: pd.Series) -> bool:
     """
     Function to check if the given series has real or discrete values
     """
-
-    pass
+    return pd.api.types.is_numeric_dtype(y)
+    
 
 
 def entropy(Y: pd.Series) -> float:
     """
     Function to calculate the entropy
     """
-
-    pass
+    counts = np.unique(Y, return_counts=True)
+    probabilities = counts / counts.sum()
+    return -np.sum(probabilities * np.log2(probabilities + 1e-9)) # here we used a small value to avoid log(0)
+    
 
 
 def gini_index(Y: pd.Series) -> float:
     """
     Function to calculate the gini index
     """
+    counts = np.unique(Y, return_counts=True)
+    probabilities = counts / counts.sum()
+    return 1 - np.sum(probabilities ** 2)
+    
 
-    pass
-
+def mse(Y: pd.Series) -> float:
+    """
+    Function to calculate the mean squared error
+    """    
+    return np.mean((Y - Y.mean()) ** 2)
 
 def information_gain(Y: pd.Series, attr: pd.Series, criterion: str) -> float:
     """
-    Function to calculate the information gain using criterion (entropy, gini index or MSE)
+    Function to calculate the information gain using criterion 
+    (entropy, gini index or MSE)
     """
+    # parent impurity
+    if criterion == "information_gain":
+        parent_impurity = entropy(Y)
+    elif criterion == "gini_index":
+        parent_impurity = gini_index(Y)
+    else:
+        raise ValueError(f"Unknown criterion: {criterion}")
 
-    pass
+    # splitting
+    values, counts = np.unique(attr, return_counts=True)
+    weighted_impurity = 0
+    for v, count in zip(values, counts):
+        subset_Y = Y[attr == v]
+        weight = count / len(Y)
+        if criterion == "information_gain":
+            weighted_impurity += weight * entropy(subset_Y)
+        elif criterion == "gini_index":
+            weighted_impurity += weight * gini_index(subset_Y)
+
+    return parent_impurity - weighted_impurity
 
 
 def opt_split_attribute(X: pd.DataFrame, y: pd.Series, criterion, features: pd.Series):
@@ -54,10 +83,38 @@ def opt_split_attribute(X: pd.DataFrame, y: pd.Series, criterion, features: pd.S
 
     return: attribute to split upon
     """
+    best_gain = -float("inf")
+    best_feature = None
+    best_threshold = None
 
+    for feature in features:
+        column = X[feature]
+
+        if check_ifreal(column):  # continuous feature
+            thresholds = np.unique(column)
+            for t in thresholds:
+                left_mask = column <= t
+                right_mask = column > t
+                if left_mask.sum() == 0 or right_mask.sum() == 0:
+                    continue
+                gain = information_gain(y, column <= t, criterion)
+                if gain > best_gain:
+                    best_gain = gain
+                    best_feature = feature
+                    best_threshold = t
+        else:  # discrete feature
+            values = np.unique(column)
+            for v in values:
+                gain = information_gain(y, column == v, criterion)
+                if gain > best_gain:
+                    best_gain = gain
+                    best_feature = feature
+                    best_threshold = v
+
+    return best_feature, best_threshold, best_gain
     # According to wheather the features are real or discrete valued and the criterion, find the attribute from the features series with the maximum information gain (entropy or varinace based on the type of output) or minimum gini index (discrete output).
 
-    pass
+   
 
 
 def split_data(X: pd.DataFrame, y: pd.Series, attribute, value):
@@ -73,5 +130,15 @@ def split_data(X: pd.DataFrame, y: pd.Series, attribute, value):
     """
 
     # Split the data based on a particular value of a particular attribute. You may use masking as a tool to split the data.
+    if check_ifreal(X[attribute]):
+        left_mask = X[attribute] <= value
+        right_mask = X[attribute] > value
+    else:
+        left_mask = X[attribute] == value
+        right_mask = X[attribute] != value
 
-    pass
+    return (
+        X[left_mask], y[left_mask],
+        X[right_mask], y[right_mask]
+    )
+
