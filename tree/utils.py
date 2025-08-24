@@ -25,7 +25,7 @@ def entropy(Y: pd.Series) -> float:
     """
     Function to calculate the entropy
     """
-    counts = np.unique(Y, return_counts=True)
+    counts = np.unique(Y)
     probabilities = counts / counts.sum()
     return -np.sum(probabilities * np.log2(probabilities + 1e-9)) # here we used a small value to avoid log(0)
     
@@ -35,7 +35,7 @@ def gini_index(Y: pd.Series) -> float:
     """
     Function to calculate the gini index
     """
-    counts = np.unique(Y, return_counts=True)
+    counts = np.unique(Y)
     probabilities = counts / counts.sum()
     return 1 - np.sum(probabilities ** 2)
     
@@ -91,7 +91,8 @@ def opt_split_attribute(X: pd.DataFrame, y: pd.Series, criterion, features: pd.S
         column = X[feature]
 
         if check_ifreal(column):  # continuous feature
-            thresholds = np.unique(column)
+            c_srt = column.sort_values()
+            thresholds = [(c_srt.iloc[i]+c_srt.iloc[i+1])/2 for i in range (len(c_srt)-1)]
             for t in thresholds:
                 left_mask = column <= t
                 right_mask = column > t
@@ -111,7 +112,7 @@ def opt_split_attribute(X: pd.DataFrame, y: pd.Series, criterion, features: pd.S
                     best_feature = feature
                     best_threshold = v
 
-    return best_feature, best_threshold, best_gain
+    return best_feature, best_threshold
     # According to wheather the features are real or discrete valued and the criterion, find the attribute from the features series with the maximum information gain (entropy or varinace based on the type of output) or minimum gini index (discrete output).
 
    

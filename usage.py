@@ -21,6 +21,8 @@ N = 30
 P = 5
 X = pd.DataFrame(np.random.randn(N, P))
 y = pd.Series(np.random.randn(N))
+print("X:", X)
+print("y", y)
 
 
 for criteria in ["information_gain", "gini_index"]:
@@ -39,6 +41,21 @@ N = 30
 P = 5
 X = pd.DataFrame(np.random.randn(N, P))
 y = pd.Series(np.random.randint(P, size=N), dtype="category")
+print("X:", X)
+print("y", y)
+
+
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay,classification_report
+
+des_tr = DecisionTreeClassifier(criterion = 'entropy', max_depth = 5)
+des_tr.fit(X,y)
+
+y_p = des_tr.predict(X)
+c = confusion_matrix(y,y_p)
+ConfusionMatrixDisplay(c).plot(cmap= 'viridis')
+
+print(classification_report(y,y_p))
 
 for criteria in ["information_gain", "gini_index"]:
     tree = DecisionTree(criterion=criteria)  # Split based on Inf. Gain
@@ -59,6 +76,8 @@ N = 30
 P = 5
 X = pd.DataFrame({i: pd.Series(np.random.randint(P, size=N), dtype="category") for i in range(5)})
 y = pd.Series(np.random.randint(P, size=N), dtype="category")
+print("X:", X)
+print("y", y)
 
 for criteria in ["information_gain", "gini_index"]:
     tree = DecisionTree(criterion=criteria)  # Split based on Inf. Gain
@@ -78,7 +97,8 @@ N = 30
 P = 5
 X = pd.DataFrame({i: pd.Series(np.random.randint(P, size=N), dtype="category") for i in range(5)})
 y = pd.Series(np.random.randn(N))
-
+print("X:", X)
+print("y", y)
 for criteria in ["information_gain", "gini_index"]:
     tree = DecisionTree(criterion=criteria)  # Split based on Inf. Gain
     tree.fit(X, y)
