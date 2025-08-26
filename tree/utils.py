@@ -17,7 +17,13 @@ def check_ifreal(y: pd.Series) -> bool:
     """
     Function to check if the given series has real or discrete values
     """
-    return pd.api.types.is_numeric_dtype(y)
+    if pd.api.types.is_float_dtype(y):
+        # Floats are continuous
+        return True
+    elif pd.api.types.is_integer_dtype(y):
+        # Integers with only a few unique values → categorical
+        return y.nunique() > 10
+    return False
     
 
 
@@ -52,49 +58,37 @@ def mse(Y: pd.Series) -> float:
     """    
     return np.mean((Y - Y.mean()) ** 2)
 
-def information_gain(Y: pd.Series, attr: pd.Series, criterion: str) -> float:
-    """
-    Function to calculate the information gain using criterion 
-    (entropy, gini index or MSE)
-    """
-    # parent impurity
-    if criterion == "information_gain":
-        parent_impurity = entropy(Y)
-    elif criterion == "gini_index":
-        parent_impurity = gini_index(Y)
-    elif criterion == "MSE":
-        parent_impurity = mse(Y)
+
+def information_gain(y, y_left, y_right, criterion):
+    if criterion == "entropy":
+        impurity_func = entropy
+    elif criterion == "gini":
+        impurity_func = gini_index
+    elif criterion == "mse":
+        impurity_func = mse
     else:
         raise ValueError(f"Unknown criterion: {criterion}")
 
-    # splitting
-    values, counts = np.unique(attr, return_counts=True)
-    #print(values, counts)
-    weighted_impurity = 0
-    for v, count in zip(values, counts):
-        subset_Y = Y[attr == v]
-        #print(subset_Y)
-        weight = count / len(Y)
-        if criterion == "information_gain":
-            weighted_impurity += weight * entropy(subset_Y)
-        elif criterion == "gini_index":
-            weighted_impurity += weight * gini_index(subset_Y)
-        elif criterion == "MSE":
-            weighted_impurity += weight * mse(subset_Y)
+    parent = impurity_func(y)
+    left_imp = impurity_func(y_left)
+    right_imp = impurity_func(y_right)
 
-    return parent_impurity - weighted_impurity
+    # weighted average impurity
+    weighted_child_imp = (len(y_left)/len(y)) * left_imp + (len(y_right)/len(y)) * right_imp
+
+    return parent - weighted_child_imp
 
 
 def opt_split_attribute(X: pd.DataFrame, y: pd.Series, criterion, features: pd.Series):
     """
-    Function to find the optimal attribute to split about.
-    If needed you can split this function into 2, one for discrete and one for real valued features.
-    You can also change the parameters of this function according to your implementation.
-
-    features: pd.Series is a list of all the attributes we have to split upon
-
-    return: attribute to split upon
+    Function to find the optimal attribute to split upon.
+    Handles both continuous (real) and discrete features.
+    
+    Returns:
+    - best_feature: feature name
+    - best_threshold: threshold (for continuous) or category (for discrete)
     """
+
     best_gain = -float("inf")
     best_feature = None
     best_threshold = None
@@ -102,32 +96,42 @@ def opt_split_attribute(X: pd.DataFrame, y: pd.Series, criterion, features: pd.S
     for feature in features:
         column = X[feature]
 
-        if check_ifreal(column):  # continuous feature
-            c_srt = column.sort_values()
-            thresholds = [(c_srt.iloc[i]+c_srt.iloc[i+1])/2 for i in range (len(c_srt)-1)]
+        #  Continuous feature
+        if check_ifreal(column):
+            values = np.sort(column.unique())
+            thresholds = (values[:-1] + values[1:]) / 2  # midpoints
+
             for t in thresholds:
-                left_mask = column <= t
-                right_mask = column > t
-                if left_mask.sum() == 0 or right_mask.sum() == 0:
+                mask = column <= t
+                if mask.sum() == 0 or (~mask).sum() == 0:
                     continue
-                gain = information_gain(y, column <= t, criterion)
+
+                #  Split y into left and right
+                y_left, y_right = y[mask], y[~mask]
+
+                gain = information_gain(y,y_left, y_right, criterion)
                 if gain > best_gain:
                     best_gain = gain
                     best_feature = feature
                     best_threshold = t
-        else:  # discrete feature
-            values = np.unique(column)
-            for v in values:
-                gain = information_gain(y, column ==  v , criterion)
+
+        # Discrete feature
+        else:
+            for v in np.unique(column):
+                mask = column == v
+                if mask.sum() == 0 or (~mask).sum() == 0:
+                    continue
+
+                y_left, y_right = y[mask], y[~mask]
+
+                gain = information_gain(y,y_left, y_right, criterion)
                 if gain > best_gain:
                     best_gain = gain
                     best_feature = feature
                     best_threshold = v
 
     return best_feature, best_threshold
-    # According to wheather the features are real or discrete valued and the criterion, find the attribute from the features series with the maximum information gain (entropy or varinace based on the type of output) or minimum gini index (discrete output).
 
-   
 
 
 def split_data(X: pd.DataFrame, y: pd.Series, attribute, value):

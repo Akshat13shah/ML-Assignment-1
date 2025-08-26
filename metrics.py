@@ -45,49 +45,68 @@ def precision(y_hat: pd.Series, y: pd.Series, cls: Union[int, str]) -> float:
     """
     Function to calculate the precision
     """
+#     assert y_hat.size == y.size
+#     act = np.unique(y)
+#     c_m = conf_mat(act, y, y_hat)
+#     p = []
+#     for j in c_m.columns:
+#         s_d = 0
+#         s = 0
+#         for i in c_m.index:
+#             if i == j:
+#                 s_d += c_m.loc[i,j]
+#             s += c_m.loc[i,j]
+# #        print(s_d,s)
+#         if s > 0:
+#             p.append(s_d/s)
+#         else:
+#             p.append(0)
+#     p_ = np.mean(p)
+#     pass
+#     return p_
     assert y_hat.size == y.size
-    act = np.unique(y)
-    c_m = conf_mat(act, y, y_hat)
-    p = []
-    for j in c_m.columns:
-        s_d = 0
-        s = 0
-        for i in c_m.index:
-            if i == j:
-                s_d += c_m.loc[i,j]
-            s += c_m.loc[i,j]
-#        print(s_d,s)
-        if s > 0:
-            p.append(s_d/s)
-        else:
-            p.append(0)
-    p_ = np.mean(p)
-    pass
-    return p_
+    classes = np.unique(y)
+    c_m = conf_mat(classes, y, y_hat)
 
+    if cls == "macro":
+        precisions = []
+        for c in classes:
+            col_sum = c_m[c].sum()
+            if col_sum > 0:
+                precisions.append(c_m.loc[c, c] / col_sum)
+            else:
+                precisions.append(0.0)
+        return float(np.mean(precisions))
+    else:
+        col_sum = c_m[cls].sum()
+        if col_sum == 0:
+            return 0.0
+        return float(c_m.loc[cls, cls] / col_sum)
 
-def recall(y_hat: pd.Series, y: pd.Series, cls: Union[int, str]) -> float:
+def recall(y_hat: pd.Series, y: pd.Series, cls: Union[int, str] = "macro") -> float:
     """
-    Function to calculate the recall
+    Function to calculate recall.
+    If cls is a specific class label, return recall for that class.
+    If cls == "macro", return macro-averaged recall.
     """
     assert y_hat.size == y.size
-    act = np.unique(y)
-    c_m = conf_mat(act, y, y_hat)
-    r = []
-    for i in c_m.index:
-        s_d = 0
-        s = 0
-        for j in c_m.columns:
-            if i == j:
-                s_d += c_m.loc[i,j]
-            s += c_m.loc[i,j]
-        if s > 0:
-            r.append(s_d/s)
-        else:
-            r.append(0)
-    r_ = np.mean(r)
-    pass
-    return r_
+    classes = np.unique(y)
+    c_m = conf_mat(classes, y, y_hat)
+
+    if cls == "macro":
+        recalls = []
+        for c in classes:
+            row_sum = c_m.loc[c].sum()
+            if row_sum > 0:
+                recalls.append(c_m.loc[c, c] / row_sum)
+            else:
+                recalls.append(0.0)
+        return float(np.mean(recalls))
+    else:
+        row_sum = c_m.loc[cls].sum()
+        if row_sum == 0:
+            return 0.0
+        return float(c_m.loc[cls, cls] / row_sum)
 
 
 def rmse(y_hat: pd.Series, y: pd.Series) -> float:

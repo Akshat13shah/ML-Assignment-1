@@ -45,9 +45,19 @@ class DecisionTree:
         """
         Function to train and construct the decision tree
         """
-        
-        self.task_type ="regression" if check_ifreal(y) else "classification"
-        self.root = self._build_tree(X, y, depth=5, features=X.columns)
+        # determine task type from y
+        self.task_type = "regression" if check_ifreal(y) else "classification"
+
+        # If regression, force mse criterion
+        if self.task_type == "regression":
+            self.criterion = "mse"
+        else:
+            # map older naming if user passed them
+            if self.criterion in ["information_gain", "information gain"]:
+                self.criterion = "entropy"
+            if self.criterion in ["gini_index"]:
+                self.criterion = "gini"
+        self.root = self._build_tree(X, y, depth=0, features=X.columns)
 
         # If you wish your code can have cases for different types of input and output data (discrete, real)
         # Use the functions from utils.py to find the optimal attribute to split upon and then construct the tree accordingly.
@@ -110,7 +120,7 @@ class DecisionTree:
         if node.is_leaf():
             return node.value
 
-        if check_ifreal(pd.Series([row[node.feature]])):
+        if isinstance(row[node.feature], (int, float, np.number)):
             if row[node.feature] <= node.threshold:
                 return self._traverse_tree(node.left, row)
             else:
