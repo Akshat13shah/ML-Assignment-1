@@ -163,5 +163,6 @@ class DecisionTree:
             _plot_node(node.left, depth + 1)
             print("\t" * depth + "No:")
             _plot_node(node.right, depth + 1)
+        _plot_node(self.root)
 
         
