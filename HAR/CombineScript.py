@@ -14,8 +14,8 @@ import numpy as np
 import os
 
 # Give the path of the test and train folder of UCI HAR Dataset
-train_path = "./UCI HAR Dataset/train"
-test_path = "./UCI HAR Dataset/test"
+train_path = r"D:\IIT GANDHINAGAR\Semester 5\ES335 Machine Learning\UCI HAR Dataset\train"
+test_path = r"D:\IIT GANDHINAGAR\Semester 5\ES335 Machine Learning\UCI HAR Dataset\test"
 
 # Dictionary of activities. Provided by the dataset.
 ACTIVITIES = {
@@ -49,6 +49,7 @@ for subject in np.unique(subject_train.values):
 
     sub_idxs = np.where( subject_train.iloc[:,0] == subject )[0]
     labels = y.loc[sub_idxs]
+    #print(labels)
 
     # Toggle through all the labels.
     for label in np.unique(labels.values):
@@ -58,6 +59,7 @@ for subject in np.unique(subject_train.values):
             os.makedirs(os.path.join("Combined","Train",ACTIVITIES[label]))
 
         label_idxs = labels[labels.iloc[:,0] == label].index
+        print(label_idxs)
 
         accx = []
         accy = []

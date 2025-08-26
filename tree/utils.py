@@ -25,8 +25,11 @@ def entropy(Y: pd.Series) -> float:
     """
     Function to calculate the entropy
     """
-    counts = np.unique(Y)
-    probabilities = counts / counts.sum()
+    counts = Y.value_counts().values
+    if counts.sum() > 0:
+        probabilities = counts / counts.sum()
+    else:
+        probabilities = 0 
     return -np.sum(probabilities * np.log2(probabilities + 1e-9)) # here we used a small value to avoid log(0)
     
 
@@ -35,8 +38,11 @@ def gini_index(Y: pd.Series) -> float:
     """
     Function to calculate the gini index
     """
-    counts = np.unique(Y)
-    probabilities = counts / counts.sum()
+    counts = Y.value_counts().values
+    if counts.sum() > 0:
+        probabilities = counts / counts.sum()
+    else:
+        probabilities = 0 
     return 1 - np.sum(probabilities ** 2)
     
 
@@ -56,19 +62,25 @@ def information_gain(Y: pd.Series, attr: pd.Series, criterion: str) -> float:
         parent_impurity = entropy(Y)
     elif criterion == "gini_index":
         parent_impurity = gini_index(Y)
+    elif criterion == "MSE":
+        parent_impurity = mse(Y)
     else:
         raise ValueError(f"Unknown criterion: {criterion}")
 
     # splitting
     values, counts = np.unique(attr, return_counts=True)
+    #print(values, counts)
     weighted_impurity = 0
     for v, count in zip(values, counts):
         subset_Y = Y[attr == v]
+        #print(subset_Y)
         weight = count / len(Y)
         if criterion == "information_gain":
             weighted_impurity += weight * entropy(subset_Y)
         elif criterion == "gini_index":
             weighted_impurity += weight * gini_index(subset_Y)
+        elif criterion == "MSE":
+            weighted_impurity += weight * mse(subset_Y)
 
     return parent_impurity - weighted_impurity
 
@@ -106,7 +118,7 @@ def opt_split_attribute(X: pd.DataFrame, y: pd.Series, criterion, features: pd.S
         else:  # discrete feature
             values = np.unique(column)
             for v in values:
-                gain = information_gain(y, column == v, criterion)
+                gain = information_gain(y, column ==  v , criterion)
                 if gain > best_gain:
                     best_gain = gain
                     best_feature = feature

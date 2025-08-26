@@ -47,7 +47,7 @@ class DecisionTree:
         """
         
         self.task_type ="regression" if check_ifreal(y) else "classification"
-        self.root = self._build_tree(X, y, depth=0, features=X.columns)
+        self.root = self._build_tree(X, y, depth=5, features=X.columns)
 
         # If you wish your code can have cases for different types of input and output data (discrete, real)
         # Use the functions from utils.py to find the optimal attribute to split upon and then construct the tree accordingly.

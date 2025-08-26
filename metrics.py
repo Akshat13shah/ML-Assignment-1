@@ -56,7 +56,11 @@ def precision(y_hat: pd.Series, y: pd.Series, cls: Union[int, str]) -> float:
             if i == j:
                 s_d += c_m.loc[i,j]
             s += c_m.loc[i,j]
-        p.append(s_d/s)
+#        print(s_d,s)
+        if s > 0:
+            p.append(s_d/s)
+        else:
+            p.append(0)
     p_ = np.mean(p)
     pass
     return p_
@@ -77,7 +81,10 @@ def recall(y_hat: pd.Series, y: pd.Series, cls: Union[int, str]) -> float:
             if i == j:
                 s_d += c_m.loc[i,j]
             s += c_m.loc[i,j]
-        r.append(s_d/s)
+        if s > 0:
+            r.append(s_d/s)
+        else:
+            r.append(0)
     r_ = np.mean(r)
     pass
     return r_
@@ -106,6 +113,5 @@ def mae(y_hat: pd.Series, y: pd.Series) -> float:
     for i in range (len(y)):
         s += abs(y[i] - y_hat[i])
     s_m = (1/len(y))*s
-    s_rm = np.sqrt(s_m)
     pass
-    return s_rm
+    return s_m
