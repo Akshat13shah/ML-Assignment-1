@@ -45,43 +45,44 @@ def precision(y_hat: pd.Series, y: pd.Series, cls: Union[int, str]) -> float:
     """
     Function to calculate the precision
     """
-#     assert y_hat.size == y.size
-#     act = np.unique(y)
-#     c_m = conf_mat(act, y, y_hat)
-#     p = []
-#     for j in c_m.columns:
-#         s_d = 0
-#         s = 0
-#         for i in c_m.index:
-#             if i == j:
-#                 s_d += c_m.loc[i,j]
-#             s += c_m.loc[i,j]
-# #        print(s_d,s)
-#         if s > 0:
-#             p.append(s_d/s)
-#         else:
-#             p.append(0)
-#     p_ = np.mean(p)
-#     pass
-#     return p_
     assert y_hat.size == y.size
-    classes = np.unique(y)
-    c_m = conf_mat(classes, y, y_hat)
+    act = np.unique(y)
+    c_m = conf_mat(act, y, y_hat)
+    p = []
+    for j in c_m.columns:
+        s_d = 0
+        s = 0
+        for i in c_m.index:
+            if i == j:
+                s_d += c_m.loc[i,j]
+            s += c_m.loc[i,j]
+        #print(s_d,s)
+        if s > 0:
+            p.append(s_d/s)
+        else:
+            p.append(0)
+    p_ = np.mean(p)
+    pass
+    return p_
 
-    if cls == "macro":
-        precisions = []
-        for c in classes:
-            col_sum = c_m[c].sum()
-            if col_sum > 0:
-                precisions.append(c_m.loc[c, c] / col_sum)
-            else:
-                precisions.append(0.0)
-        return float(np.mean(precisions))
-    else:
-        col_sum = c_m[cls].sum()
-        if col_sum == 0:
-            return 0.0
-        return float(c_m.loc[cls, cls] / col_sum)
+#    assert y_hat.size == y.size
+#    classes = np.unique(y)
+#    c_m = conf_mat(classes, y, y_hat)
+#
+#    if cls == "macro":
+#        precisions = []
+#        for c in classes:
+#            col_sum = c_m[c].sum()
+#            if col_sum > 0:
+#                precisions.append(c_m.loc[c, c] / col_sum)
+#            else:
+#                precisions.append(0.0)
+#        return float(np.mean(precisions))
+#    else:
+#        col_sum = c_m[cls].sum()
+#        if col_sum == 0:
+#            return 0.0
+#        return float(c_m.loc[cls, cls] / col_sum)
 
 def recall(y_hat: pd.Series, y: pd.Series, cls: Union[int, str] = "macro") -> float:
     """
