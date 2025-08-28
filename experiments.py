@@ -36,8 +36,8 @@ for N in range (50,60):
             #print("Criteria :", criteria)
             #print("RMSE: ", rmse(y_hat, y))
             #print("MAE: ", mae(y_hat, y))
-            i = i+1 
-            print(i)
+            #i = i+1 
+            #print(i)
         t_1.append(np.mean(t_1_1_1))
         t_2.append(np.mean(t_1_1_2))
 
@@ -46,11 +46,7 @@ for N in range (50,60):
 print(len(t_1),len(t_2))
 
 
-# ...
-# Function to calculate average time (and std) taken by fit() and predict() for different N and P for 4 different cases of DTs
-# ...
-# Function to plot the results
-# ...
+
 N = np.linspace(50,59, num = 10)
 M = np.linspace(3,5, num = 3)
 t_1 = np.array(t_1)
@@ -66,13 +62,7 @@ ax.scatter(N_mesh.flatten(),M_mesh.flatten(),t_2.flatten())
 ax.set(xlabel='Time', ylabel='No. of Samples', title='Total Time')
 plt.show()
 
-#fig = plt.figure()
-#ax = fig.add_subplot(projection = "3d")
-#ax.scatter(N_mesh.flatten(),M_mesh.flatten(),t_2.flatten())
-# plt.show()
-# Other functions
-# ...
-# Run the functions, Learn the DTs and Show the results/plots
+
 plt.plot(N, t_1_1, label = "Fitting Time")
 plt.plot(N, t_2_1, label = "Total Time")
 plt.xlabel('No. of columns')
@@ -106,8 +96,8 @@ for N in range (50,60):
             #print("Criteria :", criteria)
             #print("RMSE: ", rmse(y_hat, y))
             #print("MAE: ", mae(y_hat, y))
-            i = i+1 
-            print(i)
+            #i = i+1 
+            #print(i)
         t_1.append(np.mean(t_1_1_1))
         t_2.append(np.mean(t_1_1_2))
 
@@ -116,11 +106,7 @@ for N in range (50,60):
 print(len(t_1),len(t_2))
 
 
-# ...
-# Function to calculate average time (and std) taken by fit() and predict() for different N and P for 4 different cases of DTs
-# ...
-# Function to plot the results
-# ...
+
 N = np.linspace(50,59, num = 10)
 M = np.linspace(3,5, num = 3)
 t_1 = np.array(t_1)
@@ -129,20 +115,14 @@ N_mesh, M_mesh = np.meshgrid(N,M)
 fig = plt.figure()
 ax = fig.add_subplot(projection = "3d")
 ax.scatter(N_mesh.flatten(),M_mesh.flatten(),t_1.flatten())
-ax.set(xlabel='Time', ylabel='No. of Samples', title='Fitting Time')
+ax.set(xlabel='No. of Samples', ylabel='No. of Features', zlabel = "Time", title='Fitting Time')
 fig = plt.figure()
 ax = fig.add_subplot(projection = "3d")
 ax.scatter(N_mesh.flatten(),M_mesh.flatten(),t_2.flatten())
-ax.set(xlabel='Time', ylabel='No. of Samples', title='Total Time')
+ax.set(xlabel='No. of Samples', ylabel='No. of Features', zlabel = "Time", title='Total Time')
 plt.show()
 
-#fig = plt.figure()
-#ax = fig.add_subplot(projection = "3d")
-#ax.scatter(N_mesh.flatten(),M_mesh.flatten(),t_2.flatten())
-# plt.show()
-# Other functions
-# ...
-# Run the functions, Learn the DTs and Show the results/plots
+
 plt.plot(N, t_1_1, label = "Fitting Time")
 plt.plot(N, t_2_1, label = "Total Time")
 plt.xlabel('No. of columns')
@@ -176,8 +156,8 @@ for N in range (50,60):
             #print("Criteria :", criteria)
             #print("RMSE: ", rmse(y_hat, y))
             #print("MAE: ", mae(y_hat, y))
-            i = i+1 
-            print(i)
+            #i = i+1 
+            #print(i)
         t_1.append(np.mean(t_1_1_1))
         t_2.append(np.mean(t_1_1_2))
 
@@ -186,11 +166,7 @@ for N in range (50,60):
 print(len(t_1),len(t_2))
 
 
-# ...
-# Function to calculate average time (and std) taken by fit() and predict() for different N and P for 4 different cases of DTs
-# ...
-# Function to plot the results
-# ...
+
 N = np.linspace(50,59, num = 10)
 M = np.linspace(3,5, num = 3)
 t_1 = np.array(t_1)
@@ -199,20 +175,14 @@ N_mesh, M_mesh = np.meshgrid(N,M)
 fig = plt.figure()
 ax = fig.add_subplot(projection = "3d")
 ax.scatter(N_mesh.flatten(),M_mesh.flatten(),t_1.flatten())
-ax.set(xlabel='Time', ylabel='No. of Samples', title='Fitting Time')
+ax.set(xlabel='No. of Samples', ylabel='No. of Features', zlabel = "Time", title='Fitting Time')
 fig = plt.figure()
 ax = fig.add_subplot(projection = "3d")
 ax.scatter(N_mesh.flatten(),M_mesh.flatten(),t_2.flatten())
-ax.set(xlabel='Time', ylabel='No. of Samples', title='Total Time')
+ax.set(xlabel='No. of Samples', ylabel='No. of Features', zlabel = "Time", title='Total Time')
 plt.show()
 
-#fig = plt.figure()
-#ax = fig.add_subplot(projection = "3d")
-#ax.scatter(N_mesh.flatten(),M_mesh.flatten(),t_2.flatten())
-# plt.show()
-# Other functions
-# ...
-# Run the functions, Learn the DTs and Show the results/plots
+
 plt.plot(N, t_1_1, label = "Fitting Time")
 plt.plot(N, t_2_1, label = "Total Time")
 plt.xlabel('No. of columns')
@@ -246,8 +216,8 @@ for N in range (50,60):
             #print("Criteria :", criteria)
             #print("RMSE: ", rmse(y_hat, y))
             #print("MAE: ", mae(y_hat, y))
-            i = i+1 
-            print(i)
+            #i = i+1 
+            #print(i)
         t_1.append(np.mean(t_1_1_1))
         t_2.append(np.mean(t_1_1_2))
 
@@ -256,11 +226,7 @@ for N in range (50,60):
 print(len(t_1),len(t_2))
 
 
-# ...
-# Function to calculate average time (and std) taken by fit() and predict() for different N and P for 4 different cases of DTs
-# ...
-# Function to plot the results
-# ...
+
 N = np.linspace(50,59, num = 10)
 M = np.linspace(3,5, num = 3)
 t_1 = np.array(t_1)
@@ -269,20 +235,14 @@ N_mesh, M_mesh = np.meshgrid(N,M)
 fig = plt.figure()
 ax = fig.add_subplot(projection = "3d")
 ax.scatter(N_mesh.flatten(),M_mesh.flatten(),t_1.flatten())
-ax.set(xlabel='Time', ylabel='No. of Samples', title='Fitting Time')
+ax.set(xlabel='No. of Samples', ylabel='No. of Features', zlabel = "Time", title='Fitting Time')
 fig = plt.figure()
 ax = fig.add_subplot(projection = "3d")
 ax.scatter(N_mesh.flatten(),M_mesh.flatten(),t_2.flatten())
-ax.set(xlabel='Time', ylabel='No. of Samples', title='Total Time')
+ax.set(xlabel='No. of Samples', ylabel='No. of Features', zlabel = "Time", title='Total Time')
 plt.show()
 
-#fig = plt.figure()
-#ax = fig.add_subplot(projection = "3d")
-#ax.scatter(N_mesh.flatten(),M_mesh.flatten(),t_2.flatten())
-# plt.show()
-# Other functions
-# ...
-# Run the functions, Learn the DTs and Show the results/plots
+
 plt.plot(N, t_1_1, label = "Fitting Time")
 plt.plot(N, t_2_1, label = "Total Time")
 plt.xlabel('No. of columns')
