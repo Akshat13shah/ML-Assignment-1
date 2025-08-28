@@ -31,7 +31,7 @@ y = data_1["car name"]
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay,classification_report
 
-des_tr = DecisionTreeClassifier(criterion = 'gini', max_depth = 5)
+des_tr = DecisionTreeClassifier(criterion = 'entropy', max_depth = 5)
 des_tr.fit(X,y)
 
 y_p = des_tr.predict(X)
@@ -40,15 +40,15 @@ ConfusionMatrixDisplay(c).plot(cmap= 'viridis')
 
 print(classification_report(y,y_p))
 
-criteria = "gini_index"
+criteria = "entropy"
 tree = DecisionTree(criterion=criteria) 
 tree.fit(X, y)
 y_hat = tree.predict(X)
 tree.plot()
 print("Criteria :", criteria)
 print("Accuracy: ", accuracy(y_hat, y))
-print("Precision: ", precision(y_hat, y, 1))
-print("Recall: ", recall(y_hat, y, 1))
+print("Precision: ", precision(y_hat, y, cls = "macro"))
+print("Recall: ", recall(y_hat, y, cls = "macro"))
 
 # Clean the above data by removing redundant columns and rows with junk values
 # Compare the performance of your model with the decision tree module from scikit learn
